@@ -21,7 +21,7 @@ on:
         type: string
       runs_on:
         required: false
-        type: string
+        type: list
         default: ["ubuntu-22.04"]
     secrets:
       aws_access_key_id:
