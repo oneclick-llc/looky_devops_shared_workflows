@@ -58,7 +58,7 @@ jobs:
   build_and_push_amd64:
     needs: pre_start
     name: Pass input and secrets to my-action
-    runs-on: ${{ fromJSON(inputs.runs_on) }}
+    runs-on: ["ubuntu-22.04"]
     env:
       ENV: dev
       ECR_REGISTRY: ${{ inputs.ecr_registry }}
