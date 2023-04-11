@@ -92,7 +92,7 @@ jobs:
   #          release_branches: main,develop
   #          tag_prefix: ""
   build_and_push_ard64:
-    when: ${{ inputs.multy_arch }}
+    if: ${{ inputs.multy_arch }}
     needs: pre_start
     name: Pass input and secrets to my-action
     runs-on: ${{ fromJSON(inputs.runs_on) }}
