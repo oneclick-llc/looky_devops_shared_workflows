@@ -91,7 +91,7 @@ jobs:
   #          github_token: ${{ secrets.GITHUB_TOKEN }}
   #          release_branches: main,develop
   #          tag_prefix: ""
-  build_and_push_ard64:
+  build_and_push_arm64:
     if: ${{ inputs.multy_arch }}
     needs: pre_start
     name: Pass input and secrets to my-action
