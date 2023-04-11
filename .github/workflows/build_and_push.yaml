@@ -82,15 +82,15 @@ jobs:
           docker build -t "$ECR_REGISTRY/$ECR_REPOSITORY:${{ needs.pre_start.outputs.tag }}" --build-arg  ENV=$ENV --build-arg BUNDLE_RUBYGEMS__PKG__GITHUB__COM=$BUNDLE_RUBYGEMS__PKG__GITHUB__COM --build-arg BUNDLE_WITHOUT=$BUNDLE_WITHOUT -f Dockerfile .
         env:
           BUNDLE_RUBYGEMS__PKG__GITHUB__COM: ${{ env.BUNDLE_RUBYGEMS__PKG__GITHUB__COM }}
-  #      - name: push image
-  #        run: docker push "$ECR_REGISTRY/$ECR_REPOSITORY:${{ steps.get_tag_version.outputs.new_tag }}"
-  #      - name: Bump version and push tag
-  #        id: tag_version
-  #        uses: mathieudutour/github-tag-action@v6.1
-  #        with:
-  #          github_token: ${{ secrets.GITHUB_TOKEN }}
-  #          release_branches: main,develop
-  #          tag_prefix: ""
+      - name: push image
+        run: docker push "$ECR_REGISTRY/$ECR_REPOSITORY:${{ needs.pre_start.outputs.tag }}"
+#      - name: Bump version and push tag
+#        id: tag_version
+#        uses: mathieudutour/github-tag-action@v6.1
+#        with:
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
+#          release_branches: main,develop
+#          tag_prefix: ""
   build_and_push_arm64:
     if: ${{ inputs.multy_arch }}
     needs: pre_start
@@ -119,8 +119,8 @@ jobs:
           docker build -t "$ECR_REGISTRY/$ECR_REPOSITORY:${{ needs.pre_start.outputs.tag }}arm64" --build-arg  ENV=$ENV --build-arg BUNDLE_RUBYGEMS__PKG__GITHUB__COM=$BUNDLE_RUBYGEMS__PKG__GITHUB__COM --build-arg BUNDLE_WITHOUT=$BUNDLE_WITHOUT -f Dockerfile .
         env:
           BUNDLE_RUBYGEMS__PKG__GITHUB__COM: ${{ env.BUNDLE_RUBYGEMS__PKG__GITHUB__COM }}
-#      - name: push image
-#        run: docker push "$ECR_REGISTRY/$ECR_REPOSITORY:${{ steps.get_tag_version.outputs.new_tag }}"
+      - name: push image
+        run: docker push "$ECR_REGISTRY/$ECR_REPOSITORY:${{ needs.pre_start.outputs.tag }}arm64"
 #      - name: Bump version and push tag
 #        id: tag_version
 #        uses: mathieudutour/github-tag-action@v6.1
