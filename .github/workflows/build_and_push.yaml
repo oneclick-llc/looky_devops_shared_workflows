@@ -21,8 +21,8 @@ on:
         type: string
       runs_on:
         required: false
-        type: list
-        default: ["ubuntu-22.04"]
+        type: string
+        default: '["ubuntu-22.04"]'
     secrets:
       aws_access_key_id:
           required: true
@@ -37,7 +37,7 @@ on:
 jobs:
   build_and_push:
     name: Pass input and secrets to my-action
-    runs-on: ${{ inputs.runs_on }}
+    runs-on: ${{ fromJSON(inputs.runs_on) }}
     outputs:
       tag: ${{ steps.get_tag_version.outputs.new_tag }}
     env:
