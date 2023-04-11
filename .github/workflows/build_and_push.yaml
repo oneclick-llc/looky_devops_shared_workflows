@@ -26,7 +26,7 @@ on:
       multy_arch:
         required: false
         type: bool
-        default: false
+        default: 0
     secrets:
       aws_access_key_id:
           required: true
