@@ -23,6 +23,10 @@ on:
         required: false
         type: string
         default: '["ubuntu-22.04"]'
+      multy_arch:
+        required: false
+        type: bool
+        default: false
     secrets:
       aws_access_key_id:
           required: true
@@ -35,11 +39,25 @@ on:
         description: 'Tag version'
         value: ${{ jobs.build_and_push.outputs.tag }}
 jobs:
-  build_and_push:
-    name: Pass input and secrets to my-action
-    runs-on: ${{ fromJSON(inputs.runs_on) }}
+  pre_start:
+    name: Pre start job
     outputs:
       tag: ${{ steps.get_tag_version.outputs.new_tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Dry run for getting a version
+        id: get_tag_version
+        uses: mathieudutour/github-tag-action@v6.1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          dry_run: true
+          release_branches: main,develop
+          tag_prefix: ""
+  build_and_push:
+    needs: pre_start
+    name: Pass input and secrets to my-action
+    runs-on: ${{ fromJSON(inputs.runs_on) }}
     env:
       ENV: dev
       ECR_REGISTRY: ${{ inputs.ecr_registry }}
@@ -53,14 +71,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Dry run for getting a version
-        id: get_tag_version
-        uses: mathieudutour/github-tag-action@v6.1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          dry_run: true
-          release_branches: main,develop
-          tag_prefix: ""
       - name: Login to Amazon ECR
         id: login-ecr
         with:
@@ -68,7 +78,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1.5.3
       - name: build
         run: |
-          docker build -t "$ECR_REGISTRY/$ECR_REPOSITORY:${{ steps.get_tag_version.outputs.new_tag }}" --build-arg  ENV=$ENV --build-arg BUNDLE_RUBYGEMS__PKG__GITHUB__COM=$BUNDLE_RUBYGEMS__PKG__GITHUB__COM --build-arg BUNDLE_WITHOUT=$BUNDLE_WITHOUT -f Dockerfile .
+          docker build -t "$ECR_REGISTRY/$ECR_REPOSITORY:${{ needs.pre_start.outputs.tag }}" --build-arg  ENV=$ENV --build-arg BUNDLE_RUBYGEMS__PKG__GITHUB__COM=$BUNDLE_RUBYGEMS__PKG__GITHUB__COM --build-arg BUNDLE_WITHOUT=$BUNDLE_WITHOUT -f Dockerfile .
         env:
           BUNDLE_RUBYGEMS__PKG__GITHUB__COM: ${{ env.BUNDLE_RUBYGEMS__PKG__GITHUB__COM }}
 #      - name: push image
