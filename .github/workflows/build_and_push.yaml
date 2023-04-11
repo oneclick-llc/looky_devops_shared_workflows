@@ -41,6 +41,7 @@ on:
 jobs:
   pre_start:
     name: Pre start job
+    runs-on: ["ubuntu-22.04"]
     outputs:
       tag: ${{ steps.get_tag_version.outputs.new_tag }}
     steps:
